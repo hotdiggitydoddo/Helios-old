@@ -50,8 +50,8 @@ namespace Helios.LikeARogue
 
             _level = Level.Generate(_gameWorld, 101, 101, _atlas, _gameWorld.CellSize);
             _gameWorld.CurrentLevel = _level;
-
             player = _gameWorld.EntityManager.CreateEntity();
+            _level.Player = player;
 
             _gameWorld.HealthComponents[player].MaxHealth = 100;
             _gameWorld.HealthComponents[player].CurrentHealth = 100;
@@ -60,7 +60,7 @@ namespace Helios.LikeARogue
             
             var start = _level.GetRandomEmptyTile();
             _gameWorld.SpatialComponents[player].Position = new Vector2f(start.Cell.X, start.Cell.Y);
-            _level.UpdatePlayerFov(new Vector2f(start.Cell.X, start.Cell.Y));
+            //_level.UpdatePlayerFov(new Vector2f(start.Cell.X, start.Cell.Y));
 
             _gameWorld.CollisionComponents[player].Group = CollisionGroup.Player;
 
@@ -79,16 +79,17 @@ namespace Helios.LikeARogue
 
             _gameWorld.HealthComponents[orc].MaxHealth = 25;
             _gameWorld.HealthComponents[orc].CurrentHealth = 25;
+
             _gameWorld.SpriteComponents[orc].Sprite.Texture = _atlas.Texture;
-            _gameWorld.SpriteComponents[orc].Sprite.TextureRect = new IntRect(new Vector2i(15, 6 * _atlas.SpriteSize), new Vector2i(_atlas.SpriteSize, _atlas.SpriteSize));
+            _gameWorld.SpriteComponents[orc].Sprite.TextureRect = new IntRect(new Vector2i(15 * _atlas.SpriteSize, 6 * _atlas.SpriteSize), new Vector2i(_atlas.SpriteSize, _atlas.SpriteSize));
             _gameWorld.SpriteComponents[orc].Tint = new Color(27, 126, 1);
 
              start = _level.GetRandomEmptyTile();
             _gameWorld.SpatialComponents[orc].Position = new Vector2f(start.Cell.X, start.Cell.Y);
 
             _gameWorld.CollisionComponents[orc].Group = CollisionGroup.Enemy;
+
             _gameWorld.EnemyAIComponents[orc].MoveChance = 30;
-            _gameWorld.EnemyAIComponents[orc].States.Push(AIStates.Patrolling);
 
             _gameWorld.EntityManager.AddComponent(orc, XnaGameComponentType.Sprite);
             _gameWorld.EntityManager.AddComponent(orc, XnaGameComponentType.Spatial);
@@ -96,7 +97,7 @@ namespace Helios.LikeARogue
             _gameWorld.EntityManager.AddComponent(orc, XnaGameComponentType.Collision);
             _gameWorld.EntityManager.AddComponent(orc, XnaGameComponentType.EnemyAI);
 
-            _gameWorld.SpatialComponents[player].Position = _gameWorld.SpatialComponents[orc].Position;
+           // _gameWorld.SpatialComponents[player].Position = _gameWorld.SpatialComponents[orc].Position;
             //var entity1 = _gameWorld.EntityManager.CreateEntity();
 
             //_gameWorld.HealthComponents[entity1].MaxHealth = 100;
@@ -140,9 +141,7 @@ namespace Helios.LikeARogue
             //    _level.UpdatePlayerFov(_gameWorld.SpatialComponents[entity].Position);
             //    return;
             //}
-          
             _gameWorld.Update(elapsed);
-            _level.UpdatePlayerFov(_gameWorld.SpatialComponents[player].Position);
         }
 
         protected override void Render()
@@ -152,7 +151,7 @@ namespace Helios.LikeARogue
             //  _text.DisplayedString = string.Format("Penguin's Health: {0}", _gameWorld.HealthComponents[player].CurrentHealth);
             var ppos = _gameWorld.SpatialComponents[player].Position.ToString();
             var opos = _gameWorld.SpatialComponents[orc].Position.ToString();
-            _text.DisplayedString = string.Format("P pos: {0} | O pos: {1}", ppos, opos);
+            _text.DisplayedString = string.Format("P pos: {0} | O pos: {1} || O AIState: {2}", ppos, opos, _gameWorld.EnemyAIComponents[orc].States.Peek());
             Window.Draw(_text);
         }
     }

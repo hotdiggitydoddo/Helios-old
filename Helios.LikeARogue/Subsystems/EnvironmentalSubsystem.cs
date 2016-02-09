@@ -30,11 +30,13 @@ namespace Helios.LikeARogue.Subsystems
                 {
                     if (!collidedTile.Cell.IsWalkable)
                     {
-                        if (collidedTile.Type == TileType.Door)
-                        {
-                            collidedTile.Type = TileType.OpenDoor;
-                            World.CurrentLevel.SetTileProperties(collidedTile, true, true, true);
-                        }
+                        spatial.Position -= physics.Velocity;
+                    }
+
+                    if (collidedTile.Type == TileType.Door)
+                    {
+                        collidedTile.Type = TileType.OpenDoor;
+                        World.CurrentLevel.SetTileProperties(collidedTile, true, true, true);
                         spatial.Position -= physics.Velocity;
                     }
                     physics.Velocity = new Vector2f(0, 0);

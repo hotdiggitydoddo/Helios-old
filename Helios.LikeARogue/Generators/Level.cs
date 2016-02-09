@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Helios.Core;
 using Helios.RLToolkit.Gfx;
 using Helios.RLToolkit.Tiles;
 using RogueSharp;
@@ -115,7 +116,47 @@ namespace Helios.LikeARogue.Generators
             }
         }
 
-        public Tile[] GetSurroundingTiles(Vector2f position, int distance = 1)
+        public Tile GetNearestTileOfType(TileType type, Vector2f origin)
+        {
+            var currentCell = GetTile(origin).Cell;
+            var done = false;
+            var distance = 1;
+            Tile t = null;
+
+            while (!done)
+            {
+                var tiles = GetBorderingTilesInArea(origin, distance);
+                var matchingTiles = tiles.Where(x => x.Type == type).ToList();
+                if (!matchingTiles.Any())
+                {
+                    distance++;
+                    continue;
+                }
+
+                var pathsToTiles = new List<Path>();
+
+                foreach (var tile in matchingTiles)
+                    pathsToTiles.Add(PathFinder.ShortestPath(currentCell, tile.Cell));
+
+                pathsToTiles = pathsToTiles.OrderBy(x => x.Steps.Count()).ToList();
+
+                var destinationCell = pathsToTiles[0].End;
+                t = GetTile(destinationCell.X, destinationCell.Y);
+                done = true;
+            }
+            return t;
+        }
+
+        public Tile[] GetTilesInArea(Vector2f position, int distance = 1)
+        {
+            var cells = _map.GetCellsInArea((int)position.X, (int)position.Y, distance).ToArray();
+            var tiles = new Tile[cells.Length];
+            for (var i = 0; i < cells.Length; i++)
+                tiles[i] = GetTile(cells[i].X, cells[i].Y);
+            return tiles;
+        }
+
+        public Tile[] GetBorderingTilesInArea(Vector2f position, int distance = 1)
         {
             var cells = _map.GetBorderCellsInArea((int) position.X, (int) position.Y, distance).ToArray();
             var tiles = new Tile[cells.Length];
@@ -126,12 +167,11 @@ namespace Helios.LikeARogue.Generators
 
         public Tile GetRandomEmptyTile()
         {
-            var random = new Random();
 
             while (true)
             {
-                int x = random.Next(_map.Width);
-                int y = random.Next(_map.Height);
+                int x = GameWorld.RNG.Next(_map.Width);
+                int y = GameWorld.RNG.Next(_map.Height);
 
                 var tile = GetTile(x, y);
                 if (tile.Cell.IsWalkable)
@@ -149,6 +189,33 @@ namespace Helios.LikeARogue.Generators
             return _map.IsInFov((int)position.X, (int)position.Y);
         }
 
+        public List<uint> GetEntitesInRadius(Vector2f origin, int radius)
+        {
+            var list = new List<uint>();
+
+            var cells = _map.GetCellsInRadius((int) origin.X, (int) origin.Y, radius).ToList();
+            foreach (var cell in cells)
+            {
+                for (uint entity = 0; entity < _world.MaxEntities; entity++)
+                {
+                    var entityInCell = _world.SpatialComponents[entity].Position == new Vector2f(cell.X, cell.Y);
+                    if (entityInCell)
+                    {
+                        list.Add(entity);
+                        break;
+                    }
+                }
+            }
+            return list;
+        } 
+
+        public Path GetPathToEntity(Vector2f origin, uint entity)
+        {
+            var entityPos = _world.SpatialComponents[entity].Position;
+            var originCell = _map.GetCell((int) origin.X, (int) origin.Y);
+            var entityCell = _map.GetCell((int) entityPos.X, (int) entityPos.Y);
+            return PathFinder.ShortestPath(originCell, entityCell);
+        } 
       
 
         public void Draw(RenderTarget target, RenderStates states)

@@ -1,4 +1,5 @@
-﻿using Helios.Core;
+﻿using System;
+using Helios.Core;
 using Helios.LikeARogue.Components;
 using Helios.LikeARogue.Generators;
 using Helios.LikeARogue.Subsystems;
@@ -8,6 +9,7 @@ namespace Helios.LikeARogue
     public class GameWorld : World
     {
         //private Game1 _game;
+        public static Random RNG = new Random();
         public Level CurrentLevel { get; set; }
         public int CellSize { get; }
         //Components
@@ -66,30 +68,26 @@ namespace Helios.LikeARogue
             EnvironmentalSubsystem = new EnvironmentalSubsystem(this);
             AISubsystem = new AISubsystem(this);
         }
-
-        
-
         public override void Update(float dt)
         {
+
             if (InputSubsystem.IsPlayerTurn)
-            {
                 InputSubsystem.Update(dt);
-            }
             else
             {
                 AISubsystem.Update(dt);
-                PhysicsSubsystem.Update(dt);
-                CollisionSubsystem.Update(dt);
-                EnvironmentalSubsystem.Update(dt);
-                StatusEffectsSubsystem.Update(dt);
-                HealthSubsystem.Update(dt);
-                SpriteRendererSubsystem.Update(dt);
-
                 InputSubsystem.IsPlayerTurn = true;
             }
-            
-        }
+            PhysicsSubsystem.Update(dt);
+            CollisionSubsystem.Update(dt);
+            EnvironmentalSubsystem.Update(dt);
+            StatusEffectsSubsystem.Update(dt);
+            HealthSubsystem.Update(dt);
+            SpriteRendererSubsystem.Update(dt);
 
+            CurrentLevel.UpdatePlayerFov(SpatialComponents[CurrentLevel.Player].Position);
+
+        }
         public override void Render()
         {
             SpriteRendererSubsystem.Render();

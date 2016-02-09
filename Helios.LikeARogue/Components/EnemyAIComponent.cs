@@ -22,6 +22,7 @@ namespace Helios.LikeARogue.Components
         uint? SeekingEntity { get; set; }
         public Stack<AIStates> States { get; set; }
         public Vector2f? Goal { get; set; }
+        public uint? EntityOfInterest { get; set; }
         public float MoveChance { get; set; }
         public float ElapsedTimeSinceLastMove { get; set; }
         public Path CurrentPath { get; set; }
@@ -29,6 +30,7 @@ namespace Helios.LikeARogue.Components
         public EnemyAIComponent()
         {
             States = new Stack<AIStates>();
+            States.Push(AIStates.Resting);
         }
     }
 }
