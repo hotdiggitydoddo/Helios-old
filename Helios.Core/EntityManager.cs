@@ -60,6 +60,11 @@ namespace Helios.Core
 					subsystem.AddEntity (entity);
 		}
 
+	    public bool HasComponent(int componentType, uint entity)
+	    {
+	        return _entities[entity].IsSet(componentType);
+	    }
+
 		public void RemoveComponent(uint entity, int componentType)
 		{
 		    if (!_entities.ContainsKey(entity)) return;

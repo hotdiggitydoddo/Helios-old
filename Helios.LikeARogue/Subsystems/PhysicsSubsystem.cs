@@ -1,4 +1,7 @@
-﻿using OpenTK;
+﻿using Helios.RLToolkit.Generators;
+using OpenTK;
+using SFML.Graphics;
+using SFML.System;
 
 namespace Helios.LikeARogue.Subsystems
 {
@@ -8,7 +11,6 @@ namespace Helios.LikeARogue.Subsystems
         {
             ComponentMask.SetBit(XnaGameComponentType.Spatial);
             ComponentMask.SetBit(XnaGameComponentType.Physics);
-            ComponentMask.SetBit(XnaGameComponentType.CircleCollision);
         }
 
         public override void Update(float dt)
@@ -17,11 +19,8 @@ namespace Helios.LikeARogue.Subsystems
             {
                 var spatial = World.SpatialComponents[entity];
                 var physics = World.PhysicsComponents[entity];
-                var collision = World.CollisionComponents[entity];
 
                 spatial.Position += physics.Velocity;
-
-                collision.CollisionBody = new Circle(new Vector2(spatial.Position.X + 32, spatial.Position.Y + 32), 32);
             }
             base.Update(dt);
         }

@@ -43,6 +43,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Downloads\SFML.Net-master\SFML.Net-master\lib\x64\OpenTK.dll</HintPath>
     </Reference>
+    <Reference Include="RogueSharp, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\RogueSharp.3.0.0-pre\lib\portable-net40+sl50+win+wpa81+wp80\RogueSharp.dll</HintPath>
+    </Reference>
     <Reference Include="sfmlnet-audio-2">
       <HintPath>..\..\..\..\..\Downloads\SFML.Net-master\SFML.Net-master\lib\x64\sfmlnet-audio-2.dll</HintPath>
     </Reference>
@@ -65,6 +69,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\EnemyAIComponent.cs" />
+    <Compile Include="Components\InputComponent.cs" />
+    <Compile Include="Components\TilemapCollisionComponent.cs" />
     <Compile Include="Components\CircleCollisionComponent.cs" />
     <Compile Include="Components\FlammableComponent.cs" />
     <Compile Include="Components\HealthComponent.cs" />
@@ -75,18 +82,32 @@
     <Compile Include="Game.cs" />
     <Compile Include="GameComponentType.cs" />
     <Compile Include="GameWorld.cs" />
+    <Compile Include="Generators\Level.cs" />
+    <Compile Include="Generators\PerlinNoise.cs" />
     <Compile Include="LikeARogue.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Subsystems\AISubsystem.cs" />
     <Compile Include="Subsystems\CollisionSubsystem.cs" />
+    <Compile Include="Subsystems\EnvironmentalSubsystem.cs" />
     <Compile Include="Subsystems\GameSubsystem.cs" />
     <Compile Include="Subsystems\HealthSubsystem.cs" />
+    <Compile Include="Subsystems\InputSubsystem.cs" />
     <Compile Include="Subsystems\PhysicsSubsystem.cs" />
     <Compile Include="Subsystems\SpriteRendererSubsystem.cs" />
     <Compile Include="Subsystems\StatusEffectsSubsystem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Content Include="Content\16x16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\terminal8x8.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\tiles-24x24.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Super Mario Bros.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -116,6 +137,10 @@
     <ProjectReference Include="..\Helios.Core\Helios.Core.csproj">
       <Project>{81d0b8bd-4b40-41e0-95ac-541702fe6481}</Project>
       <Name>Helios.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Helios.RLToolkit\Helios.RLToolkit.csproj">
+      <Project>{db0f6782-3ac1-48d5-a094-6ce3bfb50f5e}</Project>
+      <Name>Helios.RLToolkit</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

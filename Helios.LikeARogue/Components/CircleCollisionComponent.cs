@@ -1,12 +1,12 @@
 ﻿namespace Helios.LikeARogue.Components
 {
-	public enum CollisionGroup
-	{
-		None,
-		All,
-		Player,
-		Enemy
-	}
+	//public enum CollisionGroup
+	//{
+	//	None,
+	//	All,
+	//	Player,
+	//	Enemy
+	//}
 
 	public class CircleCollisionComponent
 	{

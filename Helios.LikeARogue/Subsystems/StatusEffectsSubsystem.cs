@@ -15,7 +15,7 @@
 				var collision = World.CollisionComponents [entity];
 				var flammable = World.FlammableComponents [entity];
 
-				if (collision.CollidedWith != 9999)
+				if (collision.CollidedWithEntity != null)
 				{
 				    flammable.ElapsedTime = 0f;
 				    flammable.Cooldown = 0;

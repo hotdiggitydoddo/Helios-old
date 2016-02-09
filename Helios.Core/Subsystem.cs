@@ -44,6 +44,8 @@ namespace Helios.Core
             }
         }
 
+        public virtual void LateUpdate() { }
+
 		public virtual void AddEntity(uint entity)
 		{
 			if (!RelevantEntities.Contains (entity))

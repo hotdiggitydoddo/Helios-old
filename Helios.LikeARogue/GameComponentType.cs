@@ -13,6 +13,8 @@ namespace Helios.LikeARogue
         public const int Physics = 6;
         public const int Input = 7;
 		public const int CircleCollision = 8;
+        public const int Collision = 9;
+        public const int EnemyAI = 10;
     }
 
 
