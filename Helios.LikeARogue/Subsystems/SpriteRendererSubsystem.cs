@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using System.Linq;
+using SFML.Graphics;
 using SFML.System;
 
 namespace Helios.LikeARogue.Subsystems
@@ -24,8 +25,8 @@ namespace Helios.LikeARogue.Subsystems
         {
             foreach (var entity in RelevantEntities)
             {
-                var sprite = World.SpriteComponents[entity];
-                var spatial = World.SpatialComponents[entity];
+                var sprite = World.SpriteComponents.Single(x => x.Owner == entity);
+                var spatial = World.SpatialComponents.Single(x => x.Owner == entity);
 
                 sprite.Sprite.Position = spatial.Position * World.CellSize;
                 //sprite.Sprite.Scale = new Vector2f(2, 2);

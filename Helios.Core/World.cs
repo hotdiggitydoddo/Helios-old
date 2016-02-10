@@ -8,14 +8,11 @@
     /// </summary>
     public abstract class World
     {
-        public uint MaxEntities { get; }
-
 		public EntityManager EntityManager { get; private set; }
 
-		protected World (uint maxEntities)
+		protected World ()
 		{
 			EntityManager = new EntityManager(this);
-		    MaxEntities = maxEntities;
 		}
 
         /// <summary>

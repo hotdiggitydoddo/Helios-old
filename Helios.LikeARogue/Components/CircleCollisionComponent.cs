@@ -8,7 +8,7 @@
 	//	Enemy
 	//}
 
-	public class CircleCollisionComponent
+	public class CircleCollisionComponent : Component
 	{
 		public uint CollidedWith { get; set; }
 		public CollisionGroup Group { get; set; }

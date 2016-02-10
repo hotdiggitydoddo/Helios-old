@@ -1,4 +1,6 @@
-﻿namespace Helios.LikeARogue.Subsystems
+﻿using System.Linq;
+
+namespace Helios.LikeARogue.Subsystems
 {
 	public class StatusEffectsSubsystem : GameSubsystem
 	{
@@ -12,8 +14,9 @@
 		{
 			foreach (var entity in RelevantEntities)
 			{
-				var collision = World.CollisionComponents [entity];
-				var flammable = World.FlammableComponents [entity];
+			    var collision = World.CollisionComponents.Single(x => x.Owner == entity);
+
+			    var flammable = World.FlammableComponents.Single(x => x.Owner == entity);
 
 				if (collision.CollidedWithEntity != null)
 				{

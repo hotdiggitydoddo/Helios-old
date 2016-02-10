@@ -1,4 +1,5 @@
-﻿using Helios.RLToolkit.Generators;
+﻿using System.Linq;
+using Helios.RLToolkit.Generators;
 using OpenTK;
 using SFML.Graphics;
 using SFML.System;
@@ -17,10 +18,11 @@ namespace Helios.LikeARogue.Subsystems
         {
             foreach (var entity in RelevantEntities)
             {
-                var spatial = World.SpatialComponents[entity];
-                var physics = World.PhysicsComponents[entity];
+                var spatial = World.SpatialComponents.Single(x => x.Owner == entity);
+                var physics = World.PhysicsComponents.Single(x => x.Owner == entity);
 
                 spatial.Position += physics.Velocity;
+                physics.Velocity = new Vector2f(0,0);
             }
             base.Update(dt);
         }

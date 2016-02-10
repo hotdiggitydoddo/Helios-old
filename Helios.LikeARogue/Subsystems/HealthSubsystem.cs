@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using System.Linq;
+using SFML.Graphics;
 using SFML.System;
 
 namespace Helios.LikeARogue.Subsystems
@@ -21,12 +22,12 @@ namespace Helios.LikeARogue.Subsystems
         {
             foreach (var entity in RelevantEntities)
             {
-                var health = World.HealthComponents[entity];
-                var regen = World.RegenerationComponents[entity];
-                var sprite = World.SpriteComponents[entity];
+                var health = World.HealthComponents.Single(x => x.Owner == entity);
+                var regen = World.RegenerationComponents.Single(x => x.Owner == entity);
+                var sprite = World.SpriteComponents.Single(x => x.Owner == entity);
 
 
-                var flammable = World.FlammableComponents[entity];
+                var flammable = World.FlammableComponents.SingleOrDefault(x => x.Owner == entity);
 
                 if (regen.Frequency > 0)
                 {

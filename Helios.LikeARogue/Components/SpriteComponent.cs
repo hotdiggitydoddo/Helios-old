@@ -2,7 +2,7 @@
 
 namespace Helios.LikeARogue.Components
 {
-    public class SpriteComponent
+    public class SpriteComponent : Component
     {
         public Sprite Sprite { get; set; }
         public float Scale { get; set; }

@@ -26,27 +26,27 @@ namespace Helios.LikeARogue.Subsystems
         {
             foreach (var entity in RelevantEntities)
             {
-                var spatial = World.SpatialComponents[entity];
-                var ai = World.EnemyAIComponents[entity];
+                var spatial = World.SpatialComponents.Single(x => x.Owner == entity);
+                var ai = World.EnemyAIComponents.Single(x => x.Owner == entity);
 
                 if (ai.States.Peek() == AIStates.Resting || ai.States.Peek() == AIStates.Patrolling)
                 {
-                    var nearbyEntities = World.CurrentLevel.GetEntitesInRadius(spatial.Position, 5);
+                    var nearbyEntities = World.CurrentLevel.GetEntitesInRadius(spatial.Position, 3);
 
-                    //if (nearbyEntities.Any())
-                    //{
-                    //    foreach (var nearbyEntity in nearbyEntities)
-                    //    {
-                    //        var collsisonGroup = World.CollisionComponents[nearbyEntity].Group;
-                    //        if (collsisonGroup == CollisionGroup.Player)
-                    //        {
-                    //            var position = World.SpatialComponents[nearbyEntity].Position;
-                    //            ai.Goal = position;
-                    //            ai.EntityOfInterest = nearbyEntity;
-                    //            ai.States.Push(AIStates.Seeking);
-                    //        }
-                    //    }
-                    //}
+                    if (nearbyEntities.Any())
+                    {
+                        foreach (var nearbyEntity in nearbyEntities)
+                        {
+                            var collsisonGroup = World.CollisionComponents.SingleOrDefault(x => x.Group == CollisionGroup.Player);
+                            if (collsisonGroup != null)
+                            {
+                                var position = World.SpatialComponents.Single(x => x.Owner == nearbyEntity).Position;
+                                ai.Goal = position;
+                                ai.EntityOfInterest = nearbyEntity;
+                                ai.States.Push(AIStates.Seeking);
+                            }
+                        }
+                    }
                 }
 
 
@@ -74,7 +74,7 @@ namespace Helios.LikeARogue.Subsystems
                         var moveChance = RNG.NextDouble() * 100f;
                         if (moveChance <= ai.MoveChance)
                         {
-                            var physics = World.PhysicsComponents[entity];
+                            var physics = World.PhysicsComponents.Single(x => x.Owner == entity);
                             var nextStep = new Vector2f(ai.CurrentPath.CurrentStep.X, ai.CurrentPath.CurrentStep.Y);
                             var velocity = nextStep - spatial.Position;
                             ai.CurrentPath.StepForward();
@@ -103,10 +103,11 @@ namespace Helios.LikeARogue.Subsystems
                         {
                             ai.Goal = null;
                             ai.States.Pop();
+                            FoundEntity(ai);
                             break;
                         }
 
-                        var thisPhysics = World.PhysicsComponents[entity];
+                        var thisPhysics = World.PhysicsComponents.Single(x => x.Owner == entity);
                         var nextTile = new Vector2f(ai.CurrentPath.CurrentStep.X, ai.CurrentPath.CurrentStep.Y);
                         var thisVelocity = nextTile - spatial.Position;
                         ai.CurrentPath.StepForward();
@@ -133,7 +134,7 @@ namespace Helios.LikeARogue.Subsystems
                     var moveChance = RNG.NextDouble() * 100f;
                     if (moveChance <= ai.MoveChance)
                     {
-                        var physics = World.PhysicsComponents[entity];
+                        var physics = World.PhysicsComponents.Single(x => x.Owner == entity);
                         var nextStep = new Vector2f(ai.CurrentPath.CurrentStep.X, ai.CurrentPath.CurrentStep.Y);
                         var velocity = nextStep - spatial.Position;
                         ai.CurrentPath.StepForward();
@@ -150,6 +151,11 @@ namespace Helios.LikeARogue.Subsystems
                 }
             }
             base.Update(dt);
+        }
+
+        private void FoundEntity(EnemyAIComponent ai)
+        {
+            ai.States.Push(AIStates.Attacking);
         }
     }
 }

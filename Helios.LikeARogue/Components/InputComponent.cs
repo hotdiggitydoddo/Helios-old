@@ -8,7 +8,7 @@ using Key = SFML.Window.Keyboard.Key;
 
 namespace Helios.LikeARogue.Components
 {
-    public class InputComponent
+    public class InputComponent : Component
     {
         public Key KeyPress { get; set; }
         public bool WasKeyPressed { get; set; }

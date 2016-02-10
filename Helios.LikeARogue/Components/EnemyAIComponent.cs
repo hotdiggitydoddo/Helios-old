@@ -17,7 +17,7 @@ namespace Helios.LikeARogue.Components
         Retreating
     }
 
-    public class EnemyAIComponent
+    public class EnemyAIComponent : Component
     {
         uint? SeekingEntity { get; set; }
         public Stack<AIStates> States { get; set; }

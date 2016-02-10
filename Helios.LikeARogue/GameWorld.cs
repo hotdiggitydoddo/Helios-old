@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Helios.Core;
 using Helios.LikeARogue.Components;
 using Helios.LikeARogue.Generators;
@@ -13,15 +15,15 @@ namespace Helios.LikeARogue
         public Level CurrentLevel { get; set; }
         public int CellSize { get; }
         //Components
-        public HealthComponent[] HealthComponents { get; }
-        public SpatialComponent[] SpatialComponents { get; }
-        public RegenerationComponent[] RegenerationComponents { get; }
-        public SpriteComponent[] SpriteComponents { get; }
-        public PhysicsComponent[] PhysicsComponents { get; }
-		public TilemapCollisionComponent[] CollisionComponents { get;}
-		public FlammableComponent[] FlammableComponents { get; }
-        public InputComponent[] InputComponents { get; }
-        public EnemyAIComponent[] EnemyAIComponents { get; }
+        public List<HealthComponent> HealthComponents { get; }
+        public List<SpatialComponent> SpatialComponents { get; }
+        public List<RegenerationComponent> RegenerationComponents { get; }
+        public List<SpriteComponent> SpriteComponents { get; }
+        public List<PhysicsComponent> PhysicsComponents { get; }
+		public List<TilemapCollisionComponent> CollisionComponents { get;}
+		public List<FlammableComponent> FlammableComponents { get; }
+        public List<InputComponent> InputComponents { get; }
+        public List<EnemyAIComponent> EnemyAIComponents { get; }
 
         //Subsystems
         public HealthSubsystem HealthSubsystem { get; }
@@ -32,32 +34,20 @@ namespace Helios.LikeARogue
         public InputSubsystem InputSubsystem { get; }
         public EnvironmentalSubsystem  EnvironmentalSubsystem { get; }
         public AISubsystem AISubsystem { get; }
-        public GameWorld(uint maxEntities, Game game, int cellSize) : base(maxEntities)
+        public GameWorld(uint maxEntities, Game game, int cellSize)
         {
             CellSize = cellSize;
 
-            HealthComponents = new HealthComponent[maxEntities];
-            SpatialComponents = new SpatialComponent[maxEntities];
-            RegenerationComponents = new RegenerationComponent[maxEntities];
-            SpriteComponents = new SpriteComponent[maxEntities];
-            PhysicsComponents = new PhysicsComponent[maxEntities];
-			CollisionComponents = new TilemapCollisionComponent[maxEntities];
-			FlammableComponents = new FlammableComponent[maxEntities];
-            InputComponents = new InputComponent[maxEntities];
-            EnemyAIComponents = new EnemyAIComponent[maxEntities];
+            HealthComponents = new List<HealthComponent>();
+            SpatialComponents = new List<SpatialComponent>();
+            RegenerationComponents = new List<RegenerationComponent>();
+            SpriteComponents = new List<SpriteComponent>();
+            PhysicsComponents = new List<PhysicsComponent>();
+			CollisionComponents = new List<TilemapCollisionComponent>();
+			FlammableComponents = new List<FlammableComponent>();
+            InputComponents = new List<InputComponent>();
+            EnemyAIComponents = new List<EnemyAIComponent>();
 
-            for (int i = 0; i < maxEntities; i++)
-            {
-                HealthComponents[i] = new HealthComponent();
-                SpatialComponents[i] = new SpatialComponent();
-                RegenerationComponents[i] = new RegenerationComponent();
-                SpriteComponents[i] = new SpriteComponent();
-                PhysicsComponents[i] = new PhysicsComponent();
-				CollisionComponents [i] = new TilemapCollisionComponent();
-				FlammableComponents [i] = new FlammableComponent ();
-                InputComponents[i] = new InputComponent();
-                EnemyAIComponents[i] = new EnemyAIComponent();
-            }
 
             HealthSubsystem = new HealthSubsystem(this);
             PhysicsSubsystem = new PhysicsSubsystem(this);
@@ -85,7 +75,7 @@ namespace Helios.LikeARogue
             HealthSubsystem.Update(dt);
             SpriteRendererSubsystem.Update(dt);
 
-            CurrentLevel.UpdatePlayerFov(SpatialComponents[CurrentLevel.Player].Position);
+            CurrentLevel.UpdatePlayerFov(SpatialComponents.Single(x => x.Owner == CurrentLevel.Player).Position);
 
         }
         public override void Render()

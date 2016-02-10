@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Helios.Core;
+using Helios.LikeARogue.Components;
 using Helios.RLToolkit.Gfx;
 using Helios.RLToolkit.Tiles;
 using RogueSharp;
@@ -110,7 +111,7 @@ namespace Helios.LikeARogue.Generators
             {
                 if (_map.IsInFov(cell.X, cell.Y))
                 {
-                   _map.SetCellProperties(cell.X, cell.Y, cell.IsTransparent, cell.IsWalkable, true);
+                    _map.SetCellProperties(cell.X, cell.Y, cell.IsTransparent, cell.IsWalkable, true);
                 }
                 Tilemap.AddTileVertices(GetTile(cell.X, cell.Y), new Vector2f(cell.X, cell.Y));
             }
@@ -158,7 +159,7 @@ namespace Helios.LikeARogue.Generators
 
         public Tile[] GetBorderingTilesInArea(Vector2f position, int distance = 1)
         {
-            var cells = _map.GetBorderCellsInArea((int) position.X, (int) position.Y, distance).ToArray();
+            var cells = _map.GetBorderCellsInArea((int)position.X, (int)position.Y, distance).ToArray();
             var tiles = new Tile[cells.Length];
             for (var i = 0; i < cells.Length; i++)
                 tiles[i] = GetTile(cells[i].X, cells[i].Y);
@@ -193,30 +194,36 @@ namespace Helios.LikeARogue.Generators
         {
             var list = new List<uint>();
 
-            var cells = _map.GetCellsInRadius((int) origin.X, (int) origin.Y, radius).ToList();
+            var cells = _map.GetCellsInRadius((int)origin.X, (int)origin.Y, radius).ToList();
             foreach (var cell in cells)
             {
-                for (uint entity = 0; entity < _world.MaxEntities; entity++)
+                var cellPos = new Vector2f(cell.X, cell.Y);
+                var eSpatial = _world.SpatialComponents.Where(x => x.Position == cellPos).ToList();
+
+                if (!eSpatial.Any()) continue;
+
+                foreach (var spatialComponent in eSpatial)
                 {
-                    var entityInCell = _world.SpatialComponents[entity].Position == new Vector2f(cell.X, cell.Y);
-                    if (entityInCell)
-                    {
-                        list.Add(entity);
-                        break;
-                    }
+                    var collision = _world.CollisionComponents.SingleOrDefault(x => x.Owner == spatialComponent.Owner);
+                    if (collision != null && collision.Group == CollisionGroup.Player)
+                        list.Add(spatialComponent.Owner);
                 }
+
+                //var collision = _world.CollisionComponents.SingleOrDefault(x => x.Owner == eSpatial.Owner);
+                //if (collision != null && collision.Group == CollisionGroup.Player)
+                //    list.Add(eSpatial.Owner);
             }
             return list;
-        } 
+        }
 
         public Path GetPathToEntity(Vector2f origin, uint entity)
         {
-            var entityPos = _world.SpatialComponents[entity].Position;
-            var originCell = _map.GetCell((int) origin.X, (int) origin.Y);
-            var entityCell = _map.GetCell((int) entityPos.X, (int) entityPos.Y);
+            var entityPos = _world.SpatialComponents.Single(x => x.Owner == entity).Position;
+            var originCell = _map.GetCell((int)origin.X, (int)origin.Y);
+            var entityCell = _map.GetCell((int)entityPos.X, (int)entityPos.Y);
             return PathFinder.ShortestPath(originCell, entityCell);
-        } 
-      
+        }
+
 
         public void Draw(RenderTarget target, RenderStates states)
         {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Helios.RLToolkit.Generators;
 using SFML.System;
 
@@ -24,29 +25,29 @@ namespace Helios.LikeARogue.Subsystems
         {
             foreach (var entity in RelevantEntities)
             {
-                var spatial = World.SpatialComponents[entity];
+                var spatial = World.SpatialComponents.Single(x => x.Owner == entity);
 
-                var collision = World.CollisionComponents[entity];
+                var collision = World.CollisionComponents.Single(x => x.Owner == entity);
                 collision.CollidedWithEntity = null;
                 collision.CollidedWithTile = null;
 
-                var physics = World.PhysicsComponents[entity];
+                var physics = World.PhysicsComponents.Single(x => x.Owner == entity);
                 if (physics.Velocity != new Vector2f(0, 0))
                 {
                     collision.CollidedWithTile = World.CurrentLevel.GetTile((int)spatial.Position.X, (int)spatial.Position.Y);
                 }
 
-                foreach (var other in RelevantEntities)
-                {
-                    if (other == entity)
-                        continue;
+                //foreach (var other in RelevantEntities)
+                //{
+                //    if (other == entity)
+                //        continue;
 
-                    var otherSpatial = World.SpatialComponents[other];
-                    if (spatial.Position == otherSpatial.Position)
-                    {
-                        collision.CollidedWithEntity = other;
-                    }
-                }
+                //    var otherSpatial = World.SpatialComponents.Single(x => x.Owner == other);
+                //    if (spatial.Position == otherSpatial.Position)
+                //    {
+                //        collision.CollidedWithEntity = other;
+                //    }
+                //}
             }
         }
         public override void LateUpdate()
