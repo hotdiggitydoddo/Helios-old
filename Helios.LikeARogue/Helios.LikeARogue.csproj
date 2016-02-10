@@ -83,11 +83,14 @@
     <Compile Include="Game.cs" />
     <Compile Include="GameComponentType.cs" />
     <Compile Include="GameWorld.cs" />
+    <Compile Include="Generators\GameLevel.cs" />
     <Compile Include="Generators\Level.cs" />
     <Compile Include="Generators\PerlinNoise.cs" />
     <Compile Include="LikeARogue.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpatialGrid\Bin.cs" />
+    <Compile Include="SpatialGrid\SpatialGrid.cs" />
     <Compile Include="Subsystems\AISubsystem.cs" />
     <Compile Include="Subsystems\CollisionSubsystem.cs" />
     <Compile Include="Subsystems\EnvironmentalSubsystem.cs" />

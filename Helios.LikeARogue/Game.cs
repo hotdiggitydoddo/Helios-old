@@ -12,6 +12,8 @@ namespace Helios.LikeARogue
     public abstract class Game
     {
         private Clock _clock;
+        private Time _timeSinceLastUpdate = Time.Zero;
+        private Time _timePerFrame = Time.FromSeconds(1.0f/60.0f);
         public RenderWindow Window;
         protected Color clearColor;
 
@@ -33,9 +35,14 @@ namespace Helios.LikeARogue
             while (Window.IsOpen)
             {
                 Window.DispatchEvents();
-                var elapsed = _clock.Restart().AsSeconds();
-                Tick(elapsed);
+                var elapsed = _clock.Restart();
+                _timeSinceLastUpdate += elapsed;
 
+                while (_timeSinceLastUpdate > _timePerFrame)
+                {
+                    _timeSinceLastUpdate -= _timePerFrame;
+                    Tick(_timePerFrame.AsSeconds());
+                }
                 Window.Clear(clearColor);
                 Render();
                 Window.Display();

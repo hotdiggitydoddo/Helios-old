@@ -31,14 +31,20 @@ namespace Helios.LikeARogue.Subsystems
                     if (!collidedTile.Cell.IsWalkable)
                     {
                         spatial.Position -= physics.Velocity;
+                        collidedTile.Entity = null;
                     }
 
                     if (collidedTile.Type == TileType.Door)
                     {
                         collidedTile.Type = TileType.OpenDoor;
-                        World.CurrentLevel.SetTileProperties(collidedTile, true, true, true);
+                        World.CurrentLevel.SetTileProperties(collidedTile, true, true, entity == World.CurrentLevel.Player);
                         spatial.Position -= physics.Velocity;
+                        collidedTile.Entity = null;
                     }
+                    if (entity == World.CurrentLevel.Player)
+                        World.CurrentLevel.UpdatePlayerFov(spatial.Position);
+
+                    World.CurrentLevel.GetTile(spatial.Position).Entity = entity;
                     physics.Velocity = new Vector2f(0, 0);
                 }
             }

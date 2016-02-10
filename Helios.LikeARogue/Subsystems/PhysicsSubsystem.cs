@@ -22,7 +22,6 @@ namespace Helios.LikeARogue.Subsystems
                 var physics = World.PhysicsComponents.Single(x => x.Owner == entity);
 
                 spatial.Position += physics.Velocity;
-                physics.Velocity = new Vector2f(0,0);
             }
             base.Update(dt);
         }

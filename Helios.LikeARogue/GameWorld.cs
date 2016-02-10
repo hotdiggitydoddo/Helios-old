@@ -74,9 +74,6 @@ namespace Helios.LikeARogue
             StatusEffectsSubsystem.Update(dt);
             HealthSubsystem.Update(dt);
             SpriteRendererSubsystem.Update(dt);
-
-            CurrentLevel.UpdatePlayerFov(SpatialComponents.Single(x => x.Owner == CurrentLevel.Player).Position);
-
         }
         public override void Render()
         {

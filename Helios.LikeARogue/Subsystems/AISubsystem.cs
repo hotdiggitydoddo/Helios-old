@@ -7,6 +7,7 @@ using Helios.LikeARogue.Components;
 using Helios.RLToolkit.Generators;
 using Helios.RLToolkit.Tiles;
 using RogueSharp;
+using RogueSharp.DiceNotation;
 using SFML.System;
 
 namespace Helios.LikeARogue.Subsystems
@@ -29,16 +30,25 @@ namespace Helios.LikeARogue.Subsystems
                 var spatial = World.SpatialComponents.Single(x => x.Owner == entity);
                 var ai = World.EnemyAIComponents.Single(x => x.Owner == entity);
 
+                if (ai.TurnDelay > 0)
+                {
+                    ai.TurnDelay--;
+                    continue;
+                }
+
+                //If not already seeking or attacking the player, try to find him and start to chase him if in range.
                 if (ai.States.Peek() == AIStates.Resting || ai.States.Peek() == AIStates.Patrolling)
                 {
-                    var nearbyEntities = World.CurrentLevel.GetEntitesInRadius(spatial.Position, 3);
+                    var nearbyEntities = World.CurrentLevel.GetEntitesInRadius(spatial.Position, 5);
 
                     if (nearbyEntities.Any())
                     {
                         foreach (var nearbyEntity in nearbyEntities)
                         {
-                            var collsisonGroup = World.CollisionComponents.SingleOrDefault(x => x.Group == CollisionGroup.Player);
-                            if (collsisonGroup != null)
+                            if (nearbyEntity == entity) continue;
+                            
+                            var collsison = World.CollisionComponents.SingleOrDefault(x => x.Owner == nearbyEntity);
+                            if (collsison.Group == CollisionGroup.Player)
                             {
                                 var position = World.SpatialComponents.Single(x => x.Owner == nearbyEntity).Position;
                                 ai.Goal = position;
@@ -49,11 +59,10 @@ namespace Helios.LikeARogue.Subsystems
                     }
                 }
 
-
                 switch (ai.States.Peek())
                 {
                     case AIStates.Resting:
-                        if (RNG.Next(1, 100) < 25)
+                        if (Dice.Roll("1d100") < 25)
                             ai.States.Push(AIStates.Patrolling);
                         break;
                     case AIStates.Patrolling:
@@ -71,19 +80,13 @@ namespace Helios.LikeARogue.Subsystems
                             ai.States.Pop();
                             break;
                         }
-                        var moveChance = RNG.NextDouble() * 100f;
+                        var moveChance = Dice.Roll("1d100");
                         if (moveChance <= ai.MoveChance)
                         {
                             var physics = World.PhysicsComponents.Single(x => x.Owner == entity);
                             var nextStep = new Vector2f(ai.CurrentPath.CurrentStep.X, ai.CurrentPath.CurrentStep.Y);
                             var velocity = nextStep - spatial.Position;
                             ai.CurrentPath.StepForward();
-                            //var tiles = World.CurrentLevel.GetSurroundingTiles(spatial.Position);
-
-                            //var walkables = tiles.Where(x => x.Cell.IsWalkable).ToArray();
-                            //var index = RNG.Next(0, walkables.Length - 1);
-
-                            //var velocity = new Vector2f(walkables[index].Cell.X, walkables[index].Cell.Y) - spatial.Position;
                             physics.Velocity = velocity;
                         }
                         break;
@@ -112,43 +115,10 @@ namespace Helios.LikeARogue.Subsystems
                         var thisVelocity = nextTile - spatial.Position;
                         ai.CurrentPath.StepForward();
                         thisPhysics.Velocity = thisVelocity;
-                        return;
+                        break;
                 }
 
-                if (ai.States.Peek() == AIStates.Patrolling)
-                {
-                    if (!ai.Goal.HasValue)
-                    {
-                        var currentCell = World.CurrentLevel.GetTile(spatial.Position).Cell;
-                        var cell = World.CurrentLevel.GetRandomEmptyTile().Cell;
-                        ai.Goal = new Vector2f(cell.X, cell.Y);
-                        ai.CurrentPath = World.CurrentLevel.PathFinder.ShortestPath(currentCell, cell);
-                    }
-
-                    if (ai.Goal == new Vector2f(ai.CurrentPath.CurrentStep.X, ai.CurrentPath.CurrentStep.Y))
-                    {
-                        ai.Goal = null;
-                        ai.States.Pop();
-                        break;
-                    }
-                    var moveChance = RNG.NextDouble() * 100f;
-                    if (moveChance <= ai.MoveChance)
-                    {
-                        var physics = World.PhysicsComponents.Single(x => x.Owner == entity);
-                        var nextStep = new Vector2f(ai.CurrentPath.CurrentStep.X, ai.CurrentPath.CurrentStep.Y);
-                        var velocity = nextStep - spatial.Position;
-                        ai.CurrentPath.StepForward();
-                        //var tiles = World.CurrentLevel.GetSurroundingTiles(spatial.Position);
-
-                        //var walkables = tiles.Where(x => x.Cell.IsWalkable).ToArray();
-                        //var index = RNG.Next(0, walkables.Length - 1);
-
-                        //var velocity = new Vector2f(walkables[index].Cell.X, walkables[index].Cell.Y) - spatial.Position;
-                        physics.Velocity = velocity;
-                        break;
-                    }
-
-                }
+                ai.TurnDelay = Dice.Roll("1d10");
             }
             base.Update(dt);
         }
