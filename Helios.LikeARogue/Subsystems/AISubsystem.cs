@@ -27,8 +27,8 @@ namespace Helios.LikeARogue.Subsystems
         {
             foreach (var entity in RelevantEntities)
             {
-                var spatial = World.SpatialComponents.Single(x => x.Owner == entity);
-                var ai = World.EnemyAIComponents.Single(x => x.Owner == entity);
+                var spatial = World.SpatialComponents[entity];
+                var ai = World.EnemyAIComponents[entity];
 
                 if (ai.TurnDelay > 0)
                 {
@@ -46,11 +46,11 @@ namespace Helios.LikeARogue.Subsystems
                         foreach (var nearbyEntity in nearbyEntities)
                         {
                             if (nearbyEntity == entity) continue;
-                            
-                            var collsison = World.CollisionComponents.SingleOrDefault(x => x.Owner == nearbyEntity);
+
+                            var collsison = World.CollisionComponents[nearbyEntity];
                             if (collsison.Group == CollisionGroup.Player)
                             {
-                                var position = World.SpatialComponents.Single(x => x.Owner == nearbyEntity).Position;
+                                var position = World.SpatialComponents[nearbyEntity].Position;
                                 ai.Goal = position;
                                 ai.EntityOfInterest = nearbyEntity;
                                 ai.States.Push(AIStates.Seeking);
@@ -83,7 +83,7 @@ namespace Helios.LikeARogue.Subsystems
                         var moveChance = Dice.Roll("1d100");
                         if (moveChance <= ai.MoveChance)
                         {
-                            var physics = World.PhysicsComponents.Single(x => x.Owner == entity);
+                            var physics = World.PhysicsComponents[entity];
                             var nextStep = new Vector2f(ai.CurrentPath.CurrentStep.X, ai.CurrentPath.CurrentStep.Y);
                             var velocity = nextStep - spatial.Position;
                             ai.CurrentPath.StepForward();
@@ -110,7 +110,7 @@ namespace Helios.LikeARogue.Subsystems
                             break;
                         }
 
-                        var thisPhysics = World.PhysicsComponents.Single(x => x.Owner == entity);
+                        var thisPhysics = World.PhysicsComponents[entity];
                         var nextTile = new Vector2f(ai.CurrentPath.CurrentStep.X, ai.CurrentPath.CurrentStep.Y);
                         var thisVelocity = nextTile - spatial.Position;
                         ai.CurrentPath.StepForward();

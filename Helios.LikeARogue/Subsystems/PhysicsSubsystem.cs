@@ -18,8 +18,8 @@ namespace Helios.LikeARogue.Subsystems
         {
             foreach (var entity in RelevantEntities)
             {
-                var spatial = World.SpatialComponents.Single(x => x.Owner == entity);
-                var physics = World.PhysicsComponents.Single(x => x.Owner == entity);
+                var spatial = World.SpatialComponents[entity];
+                var physics = World.PhysicsComponents[entity];
 
                 spatial.Position += physics.Velocity;
             }

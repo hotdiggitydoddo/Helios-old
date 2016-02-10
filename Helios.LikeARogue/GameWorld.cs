@@ -10,20 +10,20 @@ namespace Helios.LikeARogue
 {
     public class GameWorld : World
     {
-        //private Game1 _game;
+        public const int MAX_ENTITIES = 10000;
         public static Random RNG = new Random();
         public Level CurrentLevel { get; set; }
         public int CellSize { get; }
         //Components
-        public List<HealthComponent> HealthComponents { get; }
-        public List<SpatialComponent> SpatialComponents { get; }
-        public List<RegenerationComponent> RegenerationComponents { get; }
-        public List<SpriteComponent> SpriteComponents { get; }
-        public List<PhysicsComponent> PhysicsComponents { get; }
-		public List<TilemapCollisionComponent> CollisionComponents { get;}
-		public List<FlammableComponent> FlammableComponents { get; }
-        public List<InputComponent> InputComponents { get; }
-        public List<EnemyAIComponent> EnemyAIComponents { get; }
+        public HealthComponent[] HealthComponents { get; }
+        public SpatialComponent[] SpatialComponents { get; }
+        public RegenerationComponent[] RegenerationComponents { get; }
+        public SpriteComponent[] SpriteComponents { get; }
+        public PhysicsComponent[] PhysicsComponents { get; }
+		public TilemapCollisionComponent[] CollisionComponents { get;}
+		public FlammableComponent[] FlammableComponents { get; }
+        public InputComponent[] InputComponents { get; }
+        public EnemyAIComponent[] EnemyAIComponents { get; }
 
         //Subsystems
         public HealthSubsystem HealthSubsystem { get; }
@@ -38,15 +38,28 @@ namespace Helios.LikeARogue
         {
             CellSize = cellSize;
 
-            HealthComponents = new List<HealthComponent>();
-            SpatialComponents = new List<SpatialComponent>();
-            RegenerationComponents = new List<RegenerationComponent>();
-            SpriteComponents = new List<SpriteComponent>();
-            PhysicsComponents = new List<PhysicsComponent>();
-			CollisionComponents = new List<TilemapCollisionComponent>();
-			FlammableComponents = new List<FlammableComponent>();
-            InputComponents = new List<InputComponent>();
-            EnemyAIComponents = new List<EnemyAIComponent>();
+            HealthComponents = new HealthComponent[MAX_ENTITIES];
+            SpatialComponents = new SpatialComponent[MAX_ENTITIES];
+            RegenerationComponents = new RegenerationComponent[MAX_ENTITIES];
+            SpriteComponents = new SpriteComponent[MAX_ENTITIES];
+            PhysicsComponents = new PhysicsComponent[MAX_ENTITIES];
+			CollisionComponents = new TilemapCollisionComponent[MAX_ENTITIES];
+			FlammableComponents = new FlammableComponent[MAX_ENTITIES];
+            InputComponents = new InputComponent[MAX_ENTITIES];
+            EnemyAIComponents = new EnemyAIComponent[MAX_ENTITIES];
+
+            for (int i = 0; i < MAX_ENTITIES; i++)
+            {
+                HealthComponents[i] = new HealthComponent();
+                SpatialComponents[i] = new SpatialComponent();
+                RegenerationComponents[i] = new RegenerationComponent();
+                SpatialComponents[i] = new SpatialComponent();
+                PhysicsComponents[i] = new PhysicsComponent();
+                CollisionComponents[i] = new TilemapCollisionComponent();
+                FlammableComponents[i] = new FlammableComponent();
+                InputComponents[i] = new InputComponent();
+                EnemyAIComponents[i] = new EnemyAIComponent();
+            }
 
 
             HealthSubsystem = new HealthSubsystem(this);

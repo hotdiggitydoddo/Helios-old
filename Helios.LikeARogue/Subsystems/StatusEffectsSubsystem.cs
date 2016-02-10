@@ -14,9 +14,8 @@ namespace Helios.LikeARogue.Subsystems
 		{
 			foreach (var entity in RelevantEntities)
 			{
-			    var collision = World.CollisionComponents.Single(x => x.Owner == entity);
-
-			    var flammable = World.FlammableComponents.Single(x => x.Owner == entity);
+			    var collision = World.CollisionComponents[entity];
+			    var flammable = World.FlammableComponents[entity];
 
 				if (collision.CollidedWithEntity != null)
 				{

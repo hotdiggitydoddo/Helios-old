@@ -25,13 +25,13 @@ namespace Helios.LikeARogue.Subsystems
         {
             foreach (var entity in RelevantEntities)
             {
-                var spatial = World.SpatialComponents.Single(x => x.Owner == entity);
-                var collision = World.CollisionComponents.Single(x => x.Owner == entity);
+                var spatial = World.SpatialComponents[entity];
+                var collision = World.CollisionComponents[entity];
 
                 collision.CollidedWithEntity = null;
                 collision.CollidedWithTile = null;
 
-                var physics = World.PhysicsComponents.Single(x => x.Owner == entity);
+                var physics = World.PhysicsComponents[entity];
                 if (physics.Velocity != new Vector2f(0, 0))
                 {
                     var tile = World.CurrentLevel.GetTile((int) spatial.Position.X, (int) spatial.Position.Y);

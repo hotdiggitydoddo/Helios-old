@@ -55,19 +55,19 @@ namespace Helios.LikeARogue
             player = _gameWorld.EntityManager.CreateEntity();
             _level.Player = player;
 
-            _gameWorld.HealthComponents.Add(new HealthComponent { MaxHealth = 100, CurrentHealth = 100, Owner = player });
+            _gameWorld.HealthComponents[player] = new HealthComponent { MaxHealth = 100, CurrentHealth = 100 };
 
-            var sprite = new SpriteComponent { Sprite = new Sprite(_atlas.Texture), Owner = player };
+            var sprite = new SpriteComponent { Sprite = new Sprite(_atlas.Texture) };
             sprite.Sprite.TextureRect = new IntRect(new Vector2i(0, 4 * _atlas.SpriteSize), new Vector2i(_atlas.SpriteSize, _atlas.SpriteSize));
-            _gameWorld.SpriteComponents.Add(sprite);
+            _gameWorld.SpriteComponents[player] = sprite;
 
             var start = _level.GetRandomEmptyTile();
-            _gameWorld.SpatialComponents.Add(new SpatialComponent { Position = new Vector2f(start.Cell.X, start.Cell.Y), Owner = player });
+            _gameWorld.SpatialComponents[player] = new SpatialComponent { Position = new Vector2f(start.Cell.X, start.Cell.Y) };
 
-            _gameWorld.PhysicsComponents.Add(new PhysicsComponent { Owner = player });
+            _gameWorld.PhysicsComponents[player] = new PhysicsComponent();
 
-            _gameWorld.CollisionComponents.Add(new TilemapCollisionComponent { Group =  CollisionGroup.Player, Owner = player });
-            _gameWorld.InputComponents.Add(new InputComponent { Owner = player });
+            _gameWorld.CollisionComponents[player] = new TilemapCollisionComponent { Group =  CollisionGroup.Player };
+            _gameWorld.InputComponents[player] = new InputComponent();
 
 
             _gameWorld.EntityManager.AddComponent(player, XnaGameComponentType.Health);
@@ -83,21 +83,21 @@ namespace Helios.LikeARogue
 
             orcs = new List<uint>();
 
-            for (int i = 1; i < 250; i++)
+            for (int i = 1; i < 150; i++)
             {
                 var ent = _gameWorld.EntityManager.CreateEntity();
-                _gameWorld.HealthComponents.Add(new HealthComponent { MaxHealth = 25, CurrentHealth = 25, Owner = ent });
+                _gameWorld.HealthComponents[i] = new HealthComponent { MaxHealth = 25, CurrentHealth = 25 };
 
-                sprite = new SpriteComponent { Sprite = new Sprite(_atlas.Texture), Owner = ent };
+                sprite = new SpriteComponent { Sprite = new Sprite(_atlas.Texture) };
                 sprite.Sprite.TextureRect = new IntRect(new Vector2i(15 * _atlas.SpriteSize, 6 * _atlas.SpriteSize), new Vector2i(_atlas.SpriteSize, _atlas.SpriteSize));
                 sprite.Tint = new Color(27, 126, 1);
-                _gameWorld.SpriteComponents.Add(sprite);
+                _gameWorld.SpriteComponents[i] = sprite;
 
                 start = _level.GetRandomEmptyTile();
-                _gameWorld.SpatialComponents.Add(new SpatialComponent { Position = new Vector2f(start.Cell.X, start.Cell.Y), Owner = ent });
-                _gameWorld.PhysicsComponents.Add(new PhysicsComponent { Owner = ent });
-                _gameWorld.CollisionComponents.Add(new TilemapCollisionComponent { Group = CollisionGroup.Enemy, Owner = ent });
-                _gameWorld.EnemyAIComponents.Add(new EnemyAIComponent { MoveChance = 30, Owner = ent });
+                _gameWorld.SpatialComponents[ent] = new SpatialComponent { Position = new Vector2f(start.Cell.X, start.Cell.Y) };
+                _gameWorld.PhysicsComponents[ent] = new PhysicsComponent();
+                _gameWorld.CollisionComponents[ent] = new TilemapCollisionComponent { Group = CollisionGroup.Enemy };
+                _gameWorld.EnemyAIComponents[ent] = new EnemyAIComponent { MoveChance = 30 };
 
                 _gameWorld.EntityManager.AddComponent(ent, XnaGameComponentType.Sprite);
                 _gameWorld.EntityManager.AddComponent(ent, XnaGameComponentType.Spatial);
@@ -106,7 +106,7 @@ namespace Helios.LikeARogue
                 _gameWorld.EntityManager.AddComponent(ent, XnaGameComponentType.EnemyAI);
                 orcs.Add(ent);
             }
-            _level.UpdatePlayerFov(_gameWorld.SpatialComponents.Single(x => x.Owner == _level.Player).Position);
+            _level.UpdatePlayerFov(_gameWorld.SpatialComponents[player].Position);
         }
 
         protected override void Initialize()
@@ -117,7 +117,7 @@ namespace Helios.LikeARogue
 
         private void WindowOnKeyReleased(object sender, KeyEventArgs keyEventArgs)
         {
-            var input = _gameWorld.InputComponents.Single(x => x.Owner == player);
+            var input = _gameWorld.InputComponents[player];
 
             input.WasKeyPressed = true;
             input.KeyPress = keyEventArgs.Code;
@@ -141,17 +141,17 @@ namespace Helios.LikeARogue
             _gameWorld.SpriteRendererSubsystem.Render();
             //  _text.DisplayedString = string.Format("Penguin's Health: {0}", _gameWorld.HealthComponents[player].CurrentHealth);
            // Console.WriteLine();
-            var ppos = _gameWorld.SpatialComponents.Single(x => x.Owner == player).Position.ToString();
+            var ppos = _gameWorld.SpatialComponents[player].Position.ToString();
             //  var opos = _gameWorld.SpatialComponents.Single(x => x.Owner == orc).Position.ToString();
             var textPos = new Vector2f(0, 0);
-            foreach (var orc in orcs)
-            {
-                _text.Position = textPos;
-                var ai = _gameWorld.EnemyAIComponents.Single(x => x.Owner == orc);
-                _text.DisplayedString = string.Format("Orc ID #{0} STATE: {1}", orc, ai.States.Peek());
-                Window.Draw(_text);
-                textPos += new Vector2f(0, 20);
-            }
+            //foreach (var orc in orcs)
+            //{
+            //    _text.Position = textPos;
+            //    var ai = _gameWorld.EnemyAIComponents[orc];
+            //    _text.DisplayedString = string.Format("Orc ID #{0} STATE: {1}", orc, ai.States.Peek());
+            //    Window.Draw(_text);
+            //    textPos += new Vector2f(0, 20);
+            //}
            // _text.DisplayedString = string.Format("P pos: {0} | O pos: {1} || O AIState: {2}", ppos, opos, _gameWorld.EnemyAIComponents.Single(x => x.Owner == orc).States.Peek());
            // Window.Draw(_text);
         }

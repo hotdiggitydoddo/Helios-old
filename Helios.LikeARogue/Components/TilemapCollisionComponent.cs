@@ -10,7 +10,7 @@ namespace Helios.LikeARogue.Components
 		Enemy
 	}
 
-	public class TilemapCollisionComponent : Component
+	public class TilemapCollisionComponent
 	{
 		public uint? CollidedWithEntity { get; set; }
 	    public Tile CollidedWithTile { get; set; }

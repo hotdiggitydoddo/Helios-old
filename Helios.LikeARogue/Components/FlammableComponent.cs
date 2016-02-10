@@ -1,6 +1,6 @@
 ﻿namespace Helios.LikeARogue.Components
 {
-    public class FlammableComponent : Component
+    public class FlammableComponent
     {
         public int Damage { get; set; }
         public float Duration { get; set; }

@@ -21,9 +21,9 @@ namespace Helios.LikeARogue.Subsystems
         {
             foreach (var entity in RelevantEntities)
             {
-                var spatial = World.SpatialComponents.Single(x => x.Owner == entity);
-                var physics = World.PhysicsComponents.Single(x => x.Owner == entity);
-                var collision = World.CollisionComponents.Single(x => x.Owner == entity);
+                var spatial = World.SpatialComponents[entity];
+                var physics = World.PhysicsComponents[entity];
+                var collision = World.CollisionComponents[entity];
 
                 var collidedTile = collision.CollidedWithTile;
                 if (collidedTile != null)

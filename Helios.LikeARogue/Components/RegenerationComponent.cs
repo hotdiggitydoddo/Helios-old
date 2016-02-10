@@ -1,6 +1,6 @@
 ﻿namespace Helios.LikeARogue.Components
 {
-    public class RegenerationComponent : Component
+    public class RegenerationComponent 
     {
         public int AmountToHeal { get; set; }
         public float Frequency { get; set; }

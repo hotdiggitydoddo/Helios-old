@@ -1,6 +1,6 @@
 ﻿namespace Helios.LikeARogue.Components
 {
-    public class HealthComponent : Component
+    public class HealthComponent
     {
         private int _currentHealth;
         public int Damage { get; set; }

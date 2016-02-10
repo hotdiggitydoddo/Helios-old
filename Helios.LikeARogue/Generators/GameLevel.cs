@@ -7,6 +7,7 @@ using RogueSharp;
 using SFML.Graphics;
 using SFML.System;
 using Helios.RLToolkit.Generators;
+using OpenTK.Platform.Windows;
 
 namespace Helios.LikeARogue.Generators
 {
@@ -191,41 +192,32 @@ namespace Helios.LikeARogue.Generators
         public List<uint> GetEntitesInRadius(Vector2f origin, int radius)
         {
             var list = new List<uint>();
-
             var cells = _map.GetCellsInRadius((int)origin.X, (int)origin.Y, radius).ToList();
             foreach (var cell in cells)
             {
-                var cellPos = new Vector2f(cell.X, cell.Y);
-                var eSpatial = _world.SpatialComponents.Where(x => x.Position == cellPos).ToList();
+                var entity = GetTile(cell.X, cell.Y).Entity;
 
-                if (!eSpatial.Any()) continue;
+                if (entity == null) continue;
 
-                foreach (var spatialComponent in eSpatial)
-                {
-                    var collision = _world.CollisionComponents.SingleOrDefault(x => x.Owner == spatialComponent.Owner);
-                    if (collision != null)
-                        list.Add(spatialComponent.Owner);
-                }
-
-                //var collision = _world.CollisionComponents.SingleOrDefault(x => x.Owner == eSpatial.Owner);
-                //if (collision != null && collision.Group == CollisionGroup.Player)
-                //    list.Add(eSpatial.Owner);
+                var collision = _world.CollisionComponents[entity.Value];
+                if (collision != null)
+                    list.Add((uint)entity);
             }
             return list;
         }
 
-        public Path GetPathToEntity(Vector2f origin, uint entity)
-        {
-            var entityPos = _world.SpatialComponents.Single(x => x.Owner == entity).Position;
-            var originCell = _map.GetCell((int)origin.X, (int)origin.Y);
-            var entityCell = _map.GetCell((int)entityPos.X, (int)entityPos.Y);
-            return PathFinder.ShortestPath(originCell, entityCell);
-        }
-
-
-        public void Draw(RenderTarget target, RenderStates states)
-        {
-            Tilemap.Draw(target, states);
-        }
+    public Path GetPathToEntity(Vector2f origin, uint entity)
+    {
+        var entityPos = _world.SpatialComponents[entity].Position;
+        var originCell = _map.GetCell((int)origin.X, (int)origin.Y);
+        var entityCell = _map.GetCell((int)entityPos.X, (int)entityPos.Y);
+        return PathFinder.ShortestPath(originCell, entityCell);
     }
+
+
+    public void Draw(RenderTarget target, RenderStates states)
+    {
+        Tilemap.Draw(target, states);
+    }
+}
 }

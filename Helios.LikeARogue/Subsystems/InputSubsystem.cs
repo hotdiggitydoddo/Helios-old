@@ -23,10 +23,10 @@ namespace Helios.LikeARogue.Subsystems
         {
             foreach (var entity in RelevantEntities)
             {
-                var input = World.InputComponents.Single(c => c.Owner == entity);
+                var input = World.InputComponents[entity];
                 if (!input.WasKeyPressed) continue;
 
-                var physics = World.PhysicsComponents.Single(c => c.Owner == entity);
+                var physics = World.PhysicsComponents[entity];
 
                 float x = 0f, y = 0f;
 
