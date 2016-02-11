@@ -96,11 +96,15 @@ namespace Helios.LikeARogue.Subsystems
                             ai.States.Pop();
                             break;
                         }
-                        var thisCell = World.CurrentLevel.GetTile(spatial.Position).Cell;
-                        var entityTile = World.CurrentLevel.GetTile(World.SpatialComponents[(int)ai.EntityOfInterest].Position);
+                        var entityPos = World.SpatialComponents[(int)ai.EntityOfInterest].Position;
+                        if (entityPos != ai.Goal || ai.CurrentPath == null)
+                        {
+                            var thisCell = World.CurrentLevel.GetTile(spatial.Position).Cell;
+                            var entityTile = World.CurrentLevel.GetTile(entityPos);
 
-                        ai.Goal = new Vector2f(entityTile.Cell.X, entityTile.Cell.Y);
-                        ai.CurrentPath = World.CurrentLevel.PathFinder.ShortestPath(thisCell, entityTile.Cell);
+                            ai.Goal = new Vector2f(entityTile.Cell.X, entityTile.Cell.Y);
+                            ai.CurrentPath = World.CurrentLevel.PathFinder.ShortestPath(thisCell, entityTile.Cell);
+                        }
 
                         if (ai.Goal == new Vector2f(ai.CurrentPath.CurrentStep.X, ai.CurrentPath.CurrentStep.Y))
                         {
@@ -116,16 +120,47 @@ namespace Helios.LikeARogue.Subsystems
                         ai.CurrentPath.StepForward();
                         thisPhysics.Velocity = thisVelocity;
                         break;
-                }
 
+                    case AIStates.InCombat:
+                        var entitySpatial = World.SpatialComponents[ai.EntityOfInterest.Value];
+                        if (!InRange(ai.EntityOfInterest.Value, spatial.Position, entitySpatial.Position))
+                        {
+                            ai.States.Pop();
+                            var position = World.SpatialComponents[ai.EntityOfInterest.Value].Position;
+                            ai.Goal = position;
+                            ai.States.Push(AIStates.Seeking);
+                            break;
+                        }
+                        if (Dice.Roll("1d100") < 50)
+                            ai.States.Push(AIStates.Attacking);
+                        break;
+                }
                 ai.TurnDelay = Dice.Roll("1d10");
             }
             base.Update(dt);
         }
 
+        private bool InRange(uint entity, Vector2f AIpos, Vector2f entityPos)
+        {
+            var tiles = new Tile[4]
+            {
+                World.CurrentLevel.GetTile(AIpos + new Vector2f(1, 0)),
+                World.CurrentLevel.GetTile(AIpos + new Vector2f(-1, 0)),
+                World.CurrentLevel.GetTile(AIpos + new Vector2f(0, 1)),
+                World.CurrentLevel.GetTile(AIpos + new Vector2f(0, -1))
+            };
+
+            for (var i = 0; i < tiles.Length; i++)
+            {
+                if (tiles[i].Entity != null && tiles[i].Entity.Value == entity)
+                    return true;
+            }
+            return false;
+        }
+
         private void FoundEntity(EnemyAIComponent ai)
         {
-            ai.States.Push(AIStates.Attacking);
+            ai.States.Push(AIStates.InCombat);
         }
     }
 }

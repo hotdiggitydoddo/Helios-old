@@ -76,6 +76,8 @@ namespace Helios.LikeARogue
             _gameWorld.EntityManager.AddComponent(player, XnaGameComponentType.Spatial);
             _gameWorld.EntityManager.AddComponent(player, XnaGameComponentType.Physics);
             _gameWorld.EntityManager.AddComponent(player, XnaGameComponentType.Collision);
+            _gameWorld.EntityManager.AddComponent(player, XnaGameComponentType.MeleeCombat);
+
             //_gameWorld.EntityManager.AddComponent(player, XnaGameComponentType.Flammable);
             _gameWorld.EntityManager.AddComponent(player, XnaGameComponentType.Input);
 
@@ -83,7 +85,7 @@ namespace Helios.LikeARogue
 
             orcs = new List<uint>();
 
-            for (int i = 1; i < 150; i++)
+            for (int i = 1; i < 5; i++)
             {
                 var ent = _gameWorld.EntityManager.CreateEntity();
                 _gameWorld.HealthComponents[i] = new HealthComponent { MaxHealth = 25, CurrentHealth = 25 };
@@ -103,7 +105,9 @@ namespace Helios.LikeARogue
                 _gameWorld.EntityManager.AddComponent(ent, XnaGameComponentType.Spatial);
                 _gameWorld.EntityManager.AddComponent(ent, XnaGameComponentType.Physics);
                 _gameWorld.EntityManager.AddComponent(ent, XnaGameComponentType.Collision);
+                _gameWorld.EntityManager.AddComponent(ent, XnaGameComponentType.Health);
                 _gameWorld.EntityManager.AddComponent(ent, XnaGameComponentType.EnemyAI);
+                _gameWorld.EntityManager.AddComponent(ent, XnaGameComponentType.MeleeCombat);
                 orcs.Add(ent);
             }
             _level.UpdatePlayerFov(_gameWorld.SpatialComponents[player].Position);
@@ -139,21 +143,25 @@ namespace Helios.LikeARogue
         {
             Window.Draw(_level);
             _gameWorld.SpriteRendererSubsystem.Render();
-            //  _text.DisplayedString = string.Format("Penguin's Health: {0}", _gameWorld.HealthComponents[player].CurrentHealth);
-           // Console.WriteLine();
+            _text.DisplayedString = string.Format("Penguin's Health: {0}", _gameWorld.HealthComponents[player].CurrentHealth);
+            Window.Draw(_text);
+
+            // Console.WriteLine();
             var ppos = _gameWorld.SpatialComponents[player].Position.ToString();
             //  var opos = _gameWorld.SpatialComponents.Single(x => x.Owner == orc).Position.ToString();
-            var textPos = new Vector2f(0, 0);
-            //foreach (var orc in orcs)
-            //{
-            //    _text.Position = textPos;
-            //    var ai = _gameWorld.EnemyAIComponents[orc];
-            //    _text.DisplayedString = string.Format("Orc ID #{0} STATE: {1}", orc, ai.States.Peek());
-            //    Window.Draw(_text);
-            //    textPos += new Vector2f(0, 20);
-            //}
-           // _text.DisplayedString = string.Format("P pos: {0} | O pos: {1} || O AIState: {2}", ppos, opos, _gameWorld.EnemyAIComponents.Single(x => x.Owner == orc).States.Peek());
-           // Window.Draw(_text);
+            var textPos = new Vector2f(0, 20);
+            foreach (var orc in orcs)
+            {
+                _text.Position = textPos;
+                //var ai = _gameWorld.EnemyAIComponents[orc];
+                //_text.DisplayedString = string.Format("Orc ID #{0} STATE: {1}", orc, ai.States.Peek());
+                var health = _gameWorld.HealthComponents[orc];
+                _text.DisplayedString = string.Format("Orc ID #{0} HP: {1}", orc, health.CurrentHealth);
+                Window.Draw(_text);
+                textPos += new Vector2f(0, 20);
+            }
+         //   _text.DisplayedString = string.Format("P pos: {0} | O pos: {1} || O AIState: {2}", ppos, opos, _gameWorld.EnemyAIComponents.Single(x => x.Owner == orc).States.Peek());
+            Window.Draw(_text);
         }
     }
 }

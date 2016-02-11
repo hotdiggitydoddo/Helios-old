@@ -24,6 +24,7 @@ namespace Helios.LikeARogue
 		public FlammableComponent[] FlammableComponents { get; }
         public InputComponent[] InputComponents { get; }
         public EnemyAIComponent[] EnemyAIComponents { get; }
+        public MeleeCombatComponent[] MeleeCombatComponents { get; }
 
         //Subsystems
         public HealthSubsystem HealthSubsystem { get; }
@@ -34,6 +35,8 @@ namespace Helios.LikeARogue
         public InputSubsystem InputSubsystem { get; }
         public EnvironmentalSubsystem  EnvironmentalSubsystem { get; }
         public AISubsystem AISubsystem { get; }
+        public MeleeCombatSubsystem MeleeCombatSubsystem { get; }
+
         public GameWorld(uint maxEntities, Game game, int cellSize)
         {
             CellSize = cellSize;
@@ -47,6 +50,7 @@ namespace Helios.LikeARogue
 			FlammableComponents = new FlammableComponent[MAX_ENTITIES];
             InputComponents = new InputComponent[MAX_ENTITIES];
             EnemyAIComponents = new EnemyAIComponent[MAX_ENTITIES];
+            MeleeCombatComponents = new MeleeCombatComponent[MAX_ENTITIES];
 
             for (int i = 0; i < MAX_ENTITIES; i++)
             {
@@ -59,6 +63,7 @@ namespace Helios.LikeARogue
                 FlammableComponents[i] = new FlammableComponent();
                 InputComponents[i] = new InputComponent();
                 EnemyAIComponents[i] = new EnemyAIComponent();
+                MeleeCombatComponents[i] = new MeleeCombatComponent();
             }
 
 
@@ -70,6 +75,7 @@ namespace Helios.LikeARogue
             InputSubsystem = new InputSubsystem(this);
             EnvironmentalSubsystem = new EnvironmentalSubsystem(this);
             AISubsystem = new AISubsystem(this);
+            MeleeCombatSubsystem = new MeleeCombatSubsystem(this);
         }
         public override void Update(float dt)
         {
@@ -84,6 +90,7 @@ namespace Helios.LikeARogue
             PhysicsSubsystem.Update(dt);
             CollisionSubsystem.Update(dt);
             EnvironmentalSubsystem.Update(dt);
+            MeleeCombatSubsystem.Update(dt);
             StatusEffectsSubsystem.Update(dt);
             HealthSubsystem.Update(dt);
             SpriteRendererSubsystem.Update(dt);

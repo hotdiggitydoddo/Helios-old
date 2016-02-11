@@ -15,12 +15,12 @@ namespace Helios.LikeARogue.Components
         Patrolling,
         Seeking,
         Attacking,
+        InCombat,
         Retreating
     }
 
     public class EnemyAIComponent
     {
-        uint? SeekingEntity { get; set; }
         public Stack<AIStates> States { get; set; }
         public Vector2f? Goal { get; set; }
         public uint? EntityOfInterest { get; set; }

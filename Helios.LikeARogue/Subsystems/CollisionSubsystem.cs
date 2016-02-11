@@ -7,7 +7,6 @@ namespace Helios.LikeARogue.Subsystems
 {
     public class CollisionSubsystem : GameSubsystem
     {
-        public List<uint> EntitiesWithCollisions { get; }
         public CollisionSubsystem(GameWorld world) : base(world)
         {
             ComponentMask.SetBit(XnaGameComponentType.Collision);
@@ -40,25 +39,7 @@ namespace Helios.LikeARogue.Subsystems
                     if (tile.Entity != null)
                         collision.CollidedWithEntity = tile.Entity;
                 }
-                
-
-
-                //foreach (var other in RelevantEntities)
-                //{
-                //    if (other == entity)
-                //        continue;
-
-                //    var otherSpatial = World.SpatialComponents.Single(x => x.Owner == other);
-                //    if (spatial.Position == otherSpatial.Position)
-                //    {
-                //        collision.CollidedWithEntity = other;
-                //    }
-                //}
             }
-        }
-        public override void LateUpdate()
-        {
-           EntitiesWithCollisions.Clear();
         }
     }
 }

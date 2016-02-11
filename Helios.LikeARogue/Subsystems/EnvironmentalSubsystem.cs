@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Helios.LikeARogue.Components;
 using Helios.RLToolkit.Generators;
 using SFML.System;
 
@@ -25,6 +26,25 @@ namespace Helios.LikeARogue.Subsystems
                 var physics = World.PhysicsComponents[entity];
                 var collision = World.CollisionComponents[entity];
 
+                var blockedByEntity = false;
+
+                var collidedEntity = collision.CollidedWithEntity;
+                if (collidedEntity.HasValue)
+                {
+                    var otherCollision = World.CollisionComponents[collidedEntity.Value];
+                    switch (otherCollision.Group)
+                    {
+                        case CollisionGroup.Enemy:
+                            spatial.Position -= physics.Velocity;
+                            blockedByEntity = true;
+                            break;
+                        case CollisionGroup.Player:
+                            spatial.Position -= physics.Velocity;
+                            blockedByEntity = true;
+                            break;
+                    }
+                }
+
                 var collidedTile = collision.CollidedWithTile;
                 if (collidedTile != null)
                 {
@@ -33,6 +53,8 @@ namespace Helios.LikeARogue.Subsystems
                         spatial.Position -= physics.Velocity;
                         collidedTile.Entity = null;
                     }
+                    else if (!blockedByEntity)
+                        World.CurrentLevel.GetTile(spatial.Position - physics.Velocity).Entity = null;
 
                     if (collidedTile.Type == TileType.Door)
                     {

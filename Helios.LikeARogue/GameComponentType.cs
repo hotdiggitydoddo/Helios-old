@@ -15,6 +15,7 @@ namespace Helios.LikeARogue
 		public const int CircleCollision = 8;
         public const int Collision = 9;
         public const int EnemyAI = 10;
+        public const int MeleeCombat = 11;
     }
 
 

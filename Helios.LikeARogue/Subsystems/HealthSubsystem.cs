@@ -9,7 +9,7 @@ namespace Helios.LikeARogue.Subsystems
         public HealthSubsystem(GameWorld world) : base(world)
         {
             ComponentMask.SetBit(XnaGameComponentType.Health);
-            ComponentMask.SetBit(XnaGameComponentType.Regeneration);
+          //  ComponentMask.SetBit(XnaGameComponentType.Regeneration);
             ComponentMask.SetBit(XnaGameComponentType.Sprite);
         }
 

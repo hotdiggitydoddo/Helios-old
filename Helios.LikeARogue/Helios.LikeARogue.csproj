@@ -71,6 +71,8 @@
   <ItemGroup>
     <Compile Include="Components\EnemyAIComponent.cs" />
     <Compile Include="Components\InputComponent.cs" />
+    <Compile Include="Components\MeleeCombatComponent.cs" />
+    <Compile Include="Components\StatsComponent.cs" />
     <Compile Include="Components\TilemapCollisionComponent.cs" />
     <Compile Include="Components\CircleCollisionComponent.cs" />
     <Compile Include="Components\FlammableComponent.cs" />
@@ -96,6 +98,7 @@
     <Compile Include="Subsystems\GameSubsystem.cs" />
     <Compile Include="Subsystems\HealthSubsystem.cs" />
     <Compile Include="Subsystems\InputSubsystem.cs" />
+    <Compile Include="Subsystems\MeleeCombatSubsystem.cs" />
     <Compile Include="Subsystems\PhysicsSubsystem.cs" />
     <Compile Include="Subsystems\SpriteRendererSubsystem.cs" />
     <Compile Include="Subsystems\StatusEffectsSubsystem.cs" />
